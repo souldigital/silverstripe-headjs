@@ -4,6 +4,10 @@ class HeadJsBackend extends Requirements_Backend {
 
 	public $write_js_to_body = false;
 
+	public function isBackendController() {
+		return is_subclass_of(Controller::curr(), "LeftAndMain");
+	}
+	
 	public static function getCdnSource() {
 		return Config::inst()->get('HeadJsBackend','cdnSource');
 	}
@@ -31,6 +35,9 @@ class HeadJsBackend extends Requirements_Backend {
 	 * @return string HTML content thats augumented with the requirements before the closing <head> tag.
 	 */
 	function includeInHTML($templateFile, $content) {
+		if($this->isBackendController()) {
+			return parent::includeInHTML($templateFile, $content);
+		}
 		$hasHead = (strpos($content, '</head>') !== false || strpos($content, '</head ') !== false);
 		$hasRequirements = ($this->css || $this->javascript || $this->customCSS || $this->customScript || $this->customHeadTags);
 
@@ -52,6 +59,7 @@ class HeadJsBackend extends Requirements_Backend {
 			$paths = array();
 			foreach ($jsFiles as $file => $dummy) {
 				$path = Convert::raw2xml($this->path_for_file($file));
+				$path = str_replace('&amp;', '&', $path);
 				if ($path) {
 					$paths[] = $path;
 				}
