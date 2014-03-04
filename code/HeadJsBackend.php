@@ -2,28 +2,21 @@
 
 class HeadJsBackend extends Requirements_Backend {
 
-	protected static $cdnSource = 'http://cdnjs.cloudflare.com/ajax/libs/headjs/1.0.3/head.min.js';
-	protected static $javascriptSource = '/headjs/javascript/head.min.js';
 	public $write_js_to_body = false;
 
 	public static function getCdnSource() {
-		return self::$cdnSource;
-	}
-
-	public static function setCdnSource($cdnSource) {
-		self::$cdnSource = $cdnSource;
+		return Config::inst()->get('HeadJsBackend','cdnSource');
 	}
 
 	public static function getJavascriptSource() {
-		return self::$javascriptSource;
-	}
-
-	public static function setJavascriptSource($javascriptSource) {
-		self::$javascriptSource = $javascriptSource;
+		return Config::inst()->get('HeadJsBackend','javascriptSource');
 	}
 
 	public static function getHeadJsUrl() {
-		return self::$cdnSource;
+		if(self::getJavascriptSource()) {
+			return self::getJavascriptSource();
+		}
+		return self::getCdnSource();
 	}
 
 	/**

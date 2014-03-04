@@ -1,17 +1,9 @@
 ---
-Name: mysite
+Name: headjs
 After:
   - 'framework/*'
   - 'cms/*'
 ---
-SSViewer:
-  theme: 'nef'
-Member:
-  extensions: 
-    [NefMember]
-SiteConfig:
-  extensions: 
-    [NefSiteConfig]
-File:
-  extensions: 
-    [NefFile]
+HeadJsBackend:
+    cdnSource: http://cdnjs.cloudflare.com/ajax/libs/headjs/1.0.3/head.min.js
+    javascriptSource: /headjs/javascript/head.min.js
