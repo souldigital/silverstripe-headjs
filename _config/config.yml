@@ -1,0 +1,17 @@
+---
+Name: mysite
+After:
+  - 'framework/*'
+  - 'cms/*'
+---
+SSViewer:
+  theme: 'nef'
+Member:
+  extensions: 
+    [NefMember]
+SiteConfig:
+  extensions: 
+    [NefSiteConfig]
+File:
+  extensions: 
+    [NefFile]
