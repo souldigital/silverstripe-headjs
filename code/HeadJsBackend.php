@@ -36,6 +36,7 @@ class HeadJsBackend extends Requirements_Backend {
 	 */
 	function includeInHTML($templateFile, $content) {
 		if($this->isBackendController()) {
+			//currently, it's not loading tinymce otherwise
 			return parent::includeInHTML($templateFile, $content);
 		}
 		$hasHead = (strpos($content, '</head>') !== false || strpos($content, '</head ') !== false);
