@@ -3,19 +3,45 @@
 class HeadJsBackend extends Requirements_Backend {
 
 	public $write_js_to_body = false;
+	
+	public static $do_not_wrap = array();
 
+	/**
+	 * Helper method to know if we are in the admin
+	 * @return bool
+	 */
 	public function isBackendController() {
 		return is_subclass_of(Controller::curr(), "LeftAndMain");
 	}
 	
+	/**
+	 * Do not wrap in head.ready a given customScript
+	 * @param string $code
+	 */
+	public static function doNotWrap($code) {
+		self::$do_not_wrap[] = $code;
+	}
+	
+	/**
+	 * Get the CDN source for headjs
+	 * @return string
+	 */
 	public static function getCdnSource() {
 		return Config::inst()->get('HeadJsBackend','cdnSource');
 	}
 
+	/**
+	 * Get the local filesystem source
+	 * @return string
+	 */
 	public static function getJavascriptSource() {
 		return Config::inst()->get('HeadJsBackend','javascriptSource');
 	}
 
+	/**
+	 * Get the head js url
+	 * @return string
+	 */
 	public static function getHeadJsUrl() {
 		if(self::getJavascriptSource()) {
 			return self::getJavascriptSource();
@@ -76,10 +102,16 @@ class HeadJsBackend extends Requirements_Backend {
 		// they might rely on
 		if ($this->customScript) {
 			foreach (array_diff_key($this->customScript, $this->blocked) as $script) {
+				$wrap = !in_array($script, self::$do_not_wrap);
+				
 				$jsRequirements .= "<script type=\"text/javascript\">\n//<![CDATA[\n";
-				$jsRequirements .= "head.ready(function() {\n";
+				if($wrap) {
+					$jsRequirements .= "head.ready(function() {\n";
+				}
 				$jsRequirements .= "$script\n";
-				$jsRequirements .= "});\n";
+				if($wrap) {
+					$jsRequirements .= "});\n";
+				}
 				$jsRequirements .= "\n//]]>\n</script>\n";
 			}
 		}
