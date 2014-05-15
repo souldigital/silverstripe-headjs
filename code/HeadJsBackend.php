@@ -3,7 +3,6 @@
 class HeadJsBackend extends Requirements_Backend {
 
 	public $write_js_to_body = false;
-	
 	public static $do_not_wrap = array();
 
 	/**
@@ -13,7 +12,7 @@ class HeadJsBackend extends Requirements_Backend {
 	public function isBackendController() {
 		return is_subclass_of(Controller::curr(), "LeftAndMain");
 	}
-	
+
 	/**
 	 * Do not wrap in head.ready a given customScript
 	 * @param string $code
@@ -21,13 +20,21 @@ class HeadJsBackend extends Requirements_Backend {
 	public static function doNotWrap($code) {
 		self::$do_not_wrap[] = $code;
 	}
+
+	/**
+	 * Get the CDN source for headjs
+	 * @return string
+	 */
+	public static function getNamedJsFiles() {
+		return Config::inst()->get('HeadJsBackend', 'named_js_files');
+	}
 	
 	/**
 	 * Get the CDN source for headjs
 	 * @return string
 	 */
 	public static function getCdnSource() {
-		return Config::inst()->get('HeadJsBackend','cdnSource');
+		return Config::inst()->get('HeadJsBackend', 'cdn_source');
 	}
 
 	/**
@@ -35,7 +42,7 @@ class HeadJsBackend extends Requirements_Backend {
 	 * @return string
 	 */
 	public static function getJavascriptSource() {
-		return Config::inst()->get('HeadJsBackend','javascriptSource');
+		return Config::inst()->get('HeadJsBackend', 'javascript_source');
 	}
 
 	/**
@@ -43,7 +50,7 @@ class HeadJsBackend extends Requirements_Backend {
 	 * @return string
 	 */
 	public static function getHeadJsUrl() {
-		if(self::getJavascriptSource()) {
+		if (self::getJavascriptSource()) {
 			return self::getJavascriptSource();
 		}
 		return self::getCdnSource();
@@ -61,7 +68,7 @@ class HeadJsBackend extends Requirements_Backend {
 	 * @return string HTML content thats augumented with the requirements before the closing <head> tag.
 	 */
 	function includeInHTML($templateFile, $content) {
-		if($this->isBackendController()) {
+		if ($this->isBackendController()) {
 			//currently, it's not loading tinymce otherwise
 			return parent::includeInHTML($templateFile, $content);
 		}
@@ -81,19 +88,26 @@ class HeadJsBackend extends Requirements_Backend {
 		// Combine files - updates $this->javascript and $this->css
 		$this->process_combined_files();
 
+		$named_files = self::getNamedJsFiles();
 		$jsFiles = array_diff_key($this->javascript, $this->blocked);
 		if (!empty($jsFiles)) {
 			$paths = array();
 			foreach ($jsFiles as $file => $dummy) {
+				$name = str_replace('-','',basename($file, '.js'));
 				$path = Convert::raw2xml($this->path_for_file($file));
 				$path = str_replace('&amp;', '&', $path);
 				if ($path) {
-					$paths[] = $path;
+					if($named_files) {
+						$paths[] = '{' . $name . ':"' . $path . '"}';
+					}
+					else {
+						$paths[] = $path;
+					}
 				}
 			}
 			if (!empty($paths)) {
 				$jsRequirements .= "<script type=\"text/javascript\">\n//<![CDATA[\n";
-				$jsRequirements .= "head.load(['".  implode("','", $paths)."']);";
+				$jsRequirements .= "head.load([" . implode(",", $paths) . "]);";
 				$jsRequirements .= "\n//]]>\n</script>\n";
 			}
 		}
@@ -103,13 +117,13 @@ class HeadJsBackend extends Requirements_Backend {
 		if ($this->customScript) {
 			foreach (array_diff_key($this->customScript, $this->blocked) as $script) {
 				$wrap = !in_array($script, self::$do_not_wrap);
-				
+
 				$jsRequirements .= "<script type=\"text/javascript\">\n//<![CDATA[\n";
-				if($wrap) {
+				if ($wrap) {
 					$jsRequirements .= "head.ready(function() {\n";
 				}
 				$jsRequirements .= "$script\n";
-				if($wrap) {
+				if ($wrap) {
 					$jsRequirements .= "});\n";
 				}
 				$jsRequirements .= "\n//]]>\n</script>\n";
