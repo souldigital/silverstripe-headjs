@@ -7,4 +7,4 @@ After:
 HeadJsBackend:
   cdn_source: http://cdnjs.cloudflare.com/ajax/libs/headjs/1.0.3/head.min.js
   javascript_source: /headjs/javascript/head.min.js
-  named_js_files: true
+  named_files: false
