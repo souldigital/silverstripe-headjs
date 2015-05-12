@@ -152,8 +152,8 @@
 			// they might rely on
 			$customJS = array_diff_key($this->customScript, $this->blocked);
 			if (!empty($customJS)) {
-				foreach ($customJS as $script) {
-					$sectionID = $this->get_section_id_for_include($script);
+				foreach ($customJS as $key => $script) {
+					$sectionID = $this->get_section_id_for_include($key);
 					if(in_array($script, self::$do_not_wrap)){
 						$sectionRequirements[$sectionID]["clean"][] = $script;
 					}else{
