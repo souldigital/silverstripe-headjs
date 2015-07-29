@@ -8,7 +8,10 @@ Tested with Silverstripe 3.1
 
 ##Features
 ==================
-- 
+- Async loading of requirements using the native Requirements engine
+- Specific targeting of requirement locations in DOM via SectionedHeadJsBackend
+- Critical js/css files to be required in the head while all other requirements are loaded above the closing body 
+- Add JS callbacks to requirements
 
 
 ##How do I use this thing?
@@ -53,5 +56,7 @@ if(method_exists(Requirements::backend(), "add_to_section")){
 ```
 
 ##Maintainer
-==================
 Tim - tim@souldigital.com.au
+
+##Original Repo
+[silverstripe-headjs](https://github.com/lekoala/silverstripe-headjs) by the awesome [lekoala](https://github.com/lekoala)

@@ -70,11 +70,20 @@ class HeadJsBackend extends Requirements_Backend {
 		$this->callbacks[$fileOrID] = $callback;
 	}
 
+	/**
+	 * Remove all the callbacks associated with $fileOrID
+	 * @param string $fileOrID
+	 */
 	public function remove_callback($fileOrID){
 		if(isset($this->callbacks[$fileOrID]))
 			unset($this->callbacks[$fileOrID]);
 	}
 
+
+	/**
+	 * Get all the callbacks associated with $fileOrID
+	 * @param string $fileOrID
+	 */
 	public function get_callback($fileOrID){
 		if(isset($this->callbacks[$fileOrID]))
 			return $this->callbacks[$fileOrID];
