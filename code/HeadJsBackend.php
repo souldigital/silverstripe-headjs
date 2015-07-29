@@ -91,6 +91,22 @@ class HeadJsBackend extends Requirements_Backend {
 	}
 
 	/**
+	 * Add a dependency for a file or path
+	 * @param string $child - the file or path of a file that should be loaded after the $parent
+	 * @param string $parent - the file or path that is required for the $child to work
+	 */
+	public function add_dependency($child, $parent) {
+		if(array_key_exists($child, $this->css) || array_key_exists($child, $this->javascript)){
+			$path = Convert::raw2xml($this->path_for_file($child));
+		}else{
+			$path = $child;
+		}
+		$path = str_replace('&amp;', '&', $path);
+		$this->block($child);
+		$this->add_callback($parent, "head.load(\"" . $path . "\");\n");
+	}
+
+	/**
 	 * Update the given HTML content with the appropriate include tags for the registered
 	 * requirements. Needs to receive a valid HTML/XHTML template in the $content parameter,
 	 * including a <head> tag. The requirements will insert before the closing <head> tag automatically.
