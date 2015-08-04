@@ -140,21 +140,6 @@ class HeadJsBackend extends Requirements_Backend {
 		$this->process_combined_files();
 
 		$named_files = self::getNamedFiles();
-		$jsFiles = array_diff_key($this->javascript, $this->blocked);
-		if (!empty($jsFiles)) {
-			foreach ($jsFiles as $file => $dummy) {
-				$name = str_replace('-','',basename($file, '.js'));
-				$path = Convert::raw2xml($this->path_for_file($file));
-				$path = str_replace('&amp;', '&', $path);
-				if ($path) {
-					if($named_files) {
-						$path = $name . '":"' . $path;
-					}
-					$callback = (($this->get_callback($file))?", function(){".$this->get_callback($file)."}":"");
-					$readyRequirements .= "head.load(\"" . $path . "\"{$callback});\n";
-				}
-			}
-		}
 
 		// add the css requirements, even allow a callback
 		$cssFiles = array_diff_key($this->css, $this->blocked);
@@ -173,6 +158,22 @@ class HeadJsBackend extends Requirements_Backend {
 						$callback = (($this->get_callback($file))?", function(){".$this->get_callback($file)."}":"");
 						$readyRequirements .= "head.load(\"" . $path . "\"{$callback});\n";
 					}
+				}
+			}
+		}
+
+		$jsFiles = array_diff_key($this->javascript, $this->blocked);
+		if (!empty($jsFiles)) {
+			foreach ($jsFiles as $file => $dummy) {
+				$name = str_replace('-','',basename($file, '.js'));
+				$path = Convert::raw2xml($this->path_for_file($file));
+				$path = str_replace('&amp;', '&', $path);
+				if ($path) {
+					if($named_files) {
+						$path = $name . '":"' . $path;
+					}
+					$callback = (($this->get_callback($file))?", function(){".$this->get_callback($file)."}":"");
+					$readyRequirements .= "head.load(\"" . $path . "\"{$callback});\n";
 				}
 			}
 		}
