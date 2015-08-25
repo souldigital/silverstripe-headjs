@@ -26,7 +26,7 @@
 		 *
 		 * @param string $fileOrID
 		 */
-		public function add_to_section($fileOrID, int $sectionID) {
+		public function add_to_section($fileOrID, $sectionID) {
 			$this->sections[$sectionID][$fileOrID] = $fileOrID;
 		}
 
