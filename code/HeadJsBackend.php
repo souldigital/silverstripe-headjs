@@ -98,12 +98,17 @@ class HeadJsBackend extends Requirements_Backend {
 	public function add_dependency($child, $parent) {
 		if(array_key_exists($child, $this->css) || array_key_exists($child, $this->javascript)){
 			$path = Convert::raw2xml($this->path_for_file($child));
+		}elseif(array_key_exists($child, $this->customCSS) || array_key_exists($child, $this->customScript)){
+			$code = (array_key_exists($child, $this->customCSS))?$this->customCSS[$child]:$this->customScript[$child];
 		}else{
 			$path = $child;
 		}
-		$path = str_replace('&amp;', '&', $path);
+		$path = (isset($path))?str_replace('&amp;', '&', $path):false;
 		$this->block($child);
-		$this->add_callback($parent, "head.load(\"" . $path . "\");\n");
+		if(isset($code))
+			$this->add_callback($parent, $code);
+		else
+			$this->add_callback($parent, "head.load(\"" . $path . "\");\n");
 	}
 
 	/**

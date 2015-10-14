@@ -69,6 +69,22 @@ if(method_exists(Requirements::backend(), "add_to_section")){
 }
 ```
 
+###Super-specific bugs and their associated fixes
+
+####UserForms module validation won't work (it says it can't find jQuery)
+There are lots of different ways we can solve this issue, but the simplest one I've found is if you add an extension to the UserDefinedForm_Controller - or even just edit Page_Controller - and add the following to the init() function:
+
+```
+class UserDefinedFormHeadJSExtension extends Extension {
+    public function afterGenerateConditionalJavascript(){
+        if(method_exists(Requirements::backend(), "add_dependency")){
+            Requirements::backend()->add_dependency("UserFormsConditional", USERFORMS_DIR . '/javascript/UserForm.js');
+        }
+    }
+}   
+```
+
+
 ##Maintainer
 Tim - tim@souldigital.com.au
 
